@@ -10,7 +10,7 @@ defmodule Tomai.News.API do
   def top_headlines() do
     "top-headlines"
     |> url()
-    |> Req.get(params: %{country: "us", apiKey: api_key()})
+    |> Req.get(params: %{country: "gb", apiKey: api_key()})
     |> handle_response()
   end
 
@@ -20,7 +20,6 @@ defmodule Tomai.News.API do
 
   defp handle_response({:ok, %{status: status, body: body}}) when status in 200..299 do
     body["articles"]
-    |> Enum.reject(&(&1["content"] == nil))
     |> Enum.map(&normalize_article/1)
   end
 
