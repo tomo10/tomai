@@ -17,7 +17,8 @@ defmodule TomaiWeb.Router do
   scope "/", TomaiWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    live "/", FeedLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
