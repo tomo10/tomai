@@ -18,8 +18,12 @@ defmodule Tomai.Application do
       TomaiWeb.Endpoint,
       # Start a worker by calling: Tomai.Worker.start_link(arg)
       # {Tomai.Worker, arg}
-      Tamai.News.Stream
+      Tomai.News.Stream,
       # Start the "News Stream"
+      {Nx.Serving,
+       serving: Tomai.News.Enrichments.NER.serving(),
+       name: Tomai.News.Enrichments.NER,
+       batch_size: 8}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

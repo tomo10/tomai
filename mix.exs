@@ -47,7 +47,10 @@ defmodule Tomai.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:req, "~> 0.3"}
+      {:req, "~> 0.3"},
+      {:nx, "~> 0.6"},
+      {:exla, "~> 0.6"},
+      {:bumblebee, "~> 0.3"}
     ]
   end
 
