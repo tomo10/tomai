@@ -26,6 +26,10 @@ config :tomai, TomaiWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :tomai, Tomai.Mailer, adapter: Swoosh.Adapters.Local
 
+# Configures the news api key
+# config :tomai, Tomai.News.API, api_key: System.get_env("NEWS_API_KEY")
+config :tomai, Tomai.News.API, api_key: "648fd760e1634cf1a2daabfb6ebcb88d"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.14.41",
