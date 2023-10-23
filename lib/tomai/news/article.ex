@@ -8,6 +8,7 @@ defmodule Tomai.News.Article do
     :title,
     :url,
     :url_to_image,
-    :entities
+    :entities,
+    :sentiment
   ]
 end

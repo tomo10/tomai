@@ -23,6 +23,10 @@ defmodule Tomai.Application do
       {Nx.Serving,
        serving: Tomai.News.Enrichments.NER.serving(),
        name: Tomai.News.Enrichments.NER,
+       batch_size: 8},
+      {Nx.Serving,
+       serving: Tomai.News.Enrichments.Sentiment.serving(),
+       name: Tomai.News.Enrichments.Sentiment,
        batch_size: 8}
     ]
 
