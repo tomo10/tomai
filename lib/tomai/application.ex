@@ -15,9 +15,11 @@ defmodule Tomai.Application do
       # Start Finch
       {Finch, name: Tomai.Finch},
       # Start the Endpoint (http/https)
-      TomaiWeb.Endpoint
+      TomaiWeb.Endpoint,
       # Start a worker by calling: Tomai.Worker.start_link(arg)
       # {Tomai.Worker, arg}
+      Tamai.News.Stream
+      # Start the "News Stream"
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
