@@ -34,9 +34,8 @@ defmodule Tomai.News.Stream do
   end
 
   defp schedule_stream(pid) do
-    # sends news articles to pid at a random interval between 1 and 10 minutes
-    rand_mintues = 1000 * 30
-    # rand_mintues = :rand.uniform(10) * 1000 * 60
-    Process.send_after(self(), {:stream, pid}, rand_mintues)
+    # sends news articles to pid at a random interval of 1 or 2 minutes
+    rand_interval = :rand.uniform(2) * 1000 * 60
+    Process.send_after(self(), {:stream, pid}, rand_interval)
   end
 end

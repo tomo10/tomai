@@ -13,39 +13,62 @@ defmodule TomaiWeb.FeedLive.Index do
     {:ok, socket}
   end
 
+  def text_section(assigns) do
+    ~H"""
+    <div class="p-2">
+      <h2 class="text-md font-medium"><%= @description %></h2>
+    </div>
+    """
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-2xl mx-auto my-8">
-      <h1 class="text-xl">News Feed</h1>
-      <ul class="divide-y divide-gray-100">
-        <li :for={article <- @articles}>
-          <a href={article.url} target="_window">
-            <div class={[class_for_sentiment(article.sentiment), "px-4 py-4"]}>
-              <h2 class="text-md font-medium"><%= article.title %></h2>
-              <p class="text-sm">Sentiment:<%= article.sentiment %></p>
-              <p class="text-sm"><%= article.description %></p>
-              <div class="inline-flex space-x-2">
-                <%= if article.entities do %>
-                  <span
-                    :for={entity <- article.entities}
-                    class="p-[0.5] bg-gray-50 rounded-md text-xs"
-                  >
-                    <%= entity.phrase %>-<%= entity.label %>
-                  </span>
-                <% end %>
-              </div>
-            </div>
-          </a>
-        </li>
-      </ul>
+    <div class="container">
+      <div class="grid grid-cols-2 gap-12">
+        <div class="col-span-1 pb-2">
+          <h1 class="text-xl">About</h1>
+          <ul>
+            <%= for description <- descriptions() do %>
+              <.text_section description={description} />
+            <% end %>
+          </ul>
+        </div>
+        <div class="col-span-1">
+          <h1 class="text-xl">News Feed</h1>
+          <ul class="divide-y">
+            <li :for={article <- @articles}>
+              <a href={article.url} target="_window">
+                <div class="px-4 py-4">
+                  <h2 class="text-md font-medium"><%= article.title %></h2>
+                  <div class={[class_for_sentiment(article.sentiment), "p-1 rounded-lg"]}>
+                    <p class="text-sm">Sentiment: <%= article.sentiment %></p>
+                  </div>
+                  <p class="text-sm"><%= article.description %></p>
+                  <div class="inline-flex space-x-2">
+                    <%= if article.entities do %>
+                      <span
+                        :for={entity <- article.entities}
+                        class="p-[0.5] bg-gray-50 rounded-md text-xs"
+                      >
+                        <%= entity.phrase %>-<%= entity.label %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-span-1" />
+      </div>
     </div>
     """
   end
 
   defp class_for_sentiment("positive"), do: "bg-green-100"
   defp class_for_sentiment("negative"), do: "bg-red-100"
-  defp class_for_sentiment(_class), do: ""
+  defp class_for_sentiment(_class), do: "bg-gray-100"
 
   @impl true
   def handle_info({:stream, new_articles}, socket) do
@@ -59,7 +82,7 @@ defmodule TomaiWeb.FeedLive.Index do
   def handle_info({_task, enriched_articles}, socket) do
     socket =
       socket
-      |> update(:articles, fn articles -> articles ++ enriched_articles end)
+      |> update(:articles, fn articles -> enriched_articles ++ articles end)
 
     {:noreply, socket}
   end
@@ -94,5 +117,12 @@ defmodule TomaiWeb.FeedLive.Index do
   defp process_enrichments(socket, articles) do
     socket
     |> do_all_enrichments(articles)
+  end
+
+  defp descriptions do
+    [
+      "We are pulling data from the newsapi.org using GenServer behaviour. We then run a sentiment analysis and Named Entity Recognition (NER) on the title of the article.",
+      "New articles are polled every 1-2 minutes to simlulate a real time feed. This project demonstrates the power of Elixir's AI libraries and capablities."
+    ]
   end
 end
