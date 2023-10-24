@@ -57,6 +57,9 @@ defmodule TomaiWeb.FeedLive.Index do
     {:noreply, socket}
   end
 
+  # current issues:
+  # 1. New articles are not being added to the list. They are replacing the whole list
+
   def handle_info({_task, articles}, socket) do
     socket =
       socket
@@ -69,29 +72,31 @@ defmodule TomaiWeb.FeedLive.Index do
     {:noreply, socket}
   end
 
-  defp do_ner_enrich(socket, articles) do
-    ner_task =
-      Task.async(fn ->
-        {ignore, enrich} = Enum.split_with(articles, &(&1.entities != nil))
-        ignore ++ Tomai.News.Enrichments.NER.predict(enrich)
-      end)
+  defp do_all_enrichments(socket, articles) do
+    enrich_tasks =
+      do_ner_enrich(articles)
+      |> Task.await()
+      |> do_sentiment_enrich()
 
-    assign(socket, :ner_task, ner_task)
+    assign(socket, :enrich_tasks, enrich_tasks)
   end
 
-  defp do_sentiment_enrich(socket, articles) do
-    sentiment_task =
-      Task.async(fn ->
-        {ignore, enrich} = Enum.split_with(articles, &(&1.sentiment != nil))
-        ignore ++ Tomai.News.Enrichments.Sentiment.predict(enrich)
-      end)
+  defp do_ner_enrich(articles) do
+    Task.async(fn ->
+      {ignore, enrich} = Enum.split_with(articles, &(&1.entities != nil))
+      ignore ++ Tomai.News.Enrichments.NER.predict(enrich)
+    end)
+  end
 
-    assign(socket, :sentiment_task, sentiment_task)
+  defp do_sentiment_enrich(articles) do
+    Task.async(fn ->
+      {ignore, enrich} = Enum.split_with(articles, &(&1.sentiment != nil))
+      ignore ++ Tomai.News.Enrichments.Sentiment.predict(enrich)
+    end)
   end
 
   defp process_enrichments(socket, articles) do
     socket
-    |> do_ner_enrich(articles)
-    |> do_sentiment_enrich(articles)
+    |> do_all_enrichments(articles)
   end
 end
