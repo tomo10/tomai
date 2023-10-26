@@ -6,4 +6,8 @@ defmodule TomaiWeb.PageController do
     # so skip the default app layout.
     render(conn, :home, layout: false)
   end
+
+  def scraper(conn, _params) do
+    render(conn, :scraper)
+  end
 end
