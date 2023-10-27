@@ -50,7 +50,8 @@ defmodule Tomai.MixProject do
       {:req, "~> 0.3"},
       {:nx, "~> 0.6"},
       {:exla, "~> 0.6"},
-      {:bumblebee, "~> 0.3"}
+      {:bumblebee, "~> 0.3"},
+      {:crawly, "~> 0.16.0"}
     ]
   end
 

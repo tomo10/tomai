@@ -29,6 +29,23 @@ config :tomai, Tomai.Mailer, adapter: Swoosh.Adapters.Local
 # Configures the news api key
 config :tomai, Tomai.News.API, api_key: "648fd760e1634cf1a2daabfb6ebcb88d"
 
+# Configures the Crawly webscraper
+config :crawly,
+  closespider_timeout: 10,
+  concurrent_requests_per_domain: 8,
+  closespider_itemcount: 100,
+  middlewares: [
+    Crawly.Middlewares.DomainFilter,
+    Crawly.Middlewares.UniqueRequest,
+    {Crawly.Middlewares.UserAgent, user_agents: ["Crawly Bot"]}
+  ],
+  pipelines: [
+    {Crawly.Pipelines.Validate, fields: [:url, :title, :price]},
+    {Crawly.Pipelines.DuplicatesFilter, item_id: :title},
+    Crawly.Pipelines.JSONEncoder,
+    {Crawly.Pipelines.WriteToFile, extension: "jl", folder: "/tmp"}
+  ]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.14.41",
