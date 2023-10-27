@@ -1,11 +1,15 @@
 defmodule TomaiWeb.ScraperLive.Index do
   use TomaiWeb, :live_view
+  alias Tomai.News.AfrStream
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    AfrStream.connect(self())
+
+    {:ok, assign(socket, :articles, [])}
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -15,13 +19,34 @@ defmodule TomaiWeb.ScraperLive.Index do
       >
         Scrape AFR
       </div>
+      <ul class="divide-y">
+        <li :for={article <- @articles}>
+          <a href={article.url} target="_window">
+            <div class="px-4 py-4">
+              <h2 class="text-md font-medium"><%= article.title %></h2>
+              <p class="text-sm"><%= article.summary %></p>
+              <div class="inline-flex space-x-2"></div>
+            </div>
+          </a>
+        </li>
+      </ul>
     </div>
     """
   end
 
+  @impl true
+  @spec handle_event(<<_::48>>, any(), any()) :: {:noreply, any()}
   def handle_event("scrape", _params, socket) do
     # want to start the Crawly.Spider here
+    Afr.start_afr_spider()
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:afr_stream, new_articles}, socket) do
+    IO.inspect(new_articles, label: "--------------- new_articles --------------")
+
+    {:noreply, assign(socket, :articles, new_articles)}
   end
 end

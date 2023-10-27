@@ -20,6 +20,8 @@ defmodule Tomai.Application do
       # {Tomai.Worker, arg}
       Tomai.News.Stream,
       # Start the "News Stream"
+      Tomai.News.AfrStream,
+      # Start the "Afr Stream"
       {Nx.Serving,
        serving: Tomai.News.Enrichments.NER.serving(),
        name: Tomai.News.Enrichments.NER,

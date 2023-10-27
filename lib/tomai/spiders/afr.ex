@@ -24,9 +24,9 @@ defmodule Afr do
         }
       end)
 
-    next_requests = []
+    GenServer.cast(Tomai.News.AfrStream, {:scraped_data, items})
 
-    %{items: items, requests: next_requests}
+    %{items: items, requests: []}
   end
 
   def start_afr_spider() do
