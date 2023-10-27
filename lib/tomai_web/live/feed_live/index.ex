@@ -60,7 +60,6 @@ defmodule TomaiWeb.FeedLive.Index do
             </li>
           </ul>
         </div>
-        <div class="col-span-1" />
       </div>
     </div>
     """

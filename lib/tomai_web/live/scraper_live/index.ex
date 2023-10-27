@@ -9,8 +9,19 @@ defmodule TomaiWeb.ScraperLive.Index do
   def render(assigns) do
     ~H"""
     <div>
-      <h1>Scraper</h1>
+      <div
+        phx-click="scrape"
+        class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+      >
+        Scrape AFR
+      </div>
     </div>
     """
+  end
+
+  def handle_event("scrape", _params, socket) do
+    # want to start the Crawly.Spider here
+
+    {:noreply, socket}
   end
 end

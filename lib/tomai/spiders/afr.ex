@@ -16,7 +16,7 @@ defmodule Afr do
 
     # CSS class selector for headlines on afr.com/companies/financial-services
     items =
-      Floki.find(document, "_2slqK")
+      Floki.find(document, "._2slqK")
       |> Enum.map(fn story ->
         %{
           title: Floki.find(story, "h3") |> Floki.text(),
@@ -27,5 +27,9 @@ defmodule Afr do
     next_requests = []
 
     %{items: items, requests: next_requests}
+  end
+
+  def start_afr_spider() do
+    Crawly.Engine.start_spider(Afr)
   end
 end
