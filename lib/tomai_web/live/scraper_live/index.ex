@@ -21,7 +21,7 @@ defmodule TomaiWeb.ScraperLive.Index do
       </div>
       <ul class="divide-y">
         <li :for={article <- @articles}>
-          <a href={article.url} target="_window">
+          <a href="www.bbc.co.uk" target="_window">
             <div class="px-4 py-4">
               <h2 class="text-md font-medium"><%= article.title %></h2>
               <p class="text-sm"><%= article.summary %></p>
@@ -35,9 +35,7 @@ defmodule TomaiWeb.ScraperLive.Index do
   end
 
   @impl true
-  @spec handle_event(<<_::48>>, any(), any()) :: {:noreply, any()}
   def handle_event("scrape", _params, socket) do
-    # want to start the Crawly.Spider here
     Afr.start_afr_spider()
 
     {:noreply, socket}
@@ -45,8 +43,6 @@ defmodule TomaiWeb.ScraperLive.Index do
 
   @impl true
   def handle_info({:afr_stream, new_articles}, socket) do
-    IO.inspect(new_articles, label: "--------------- new_articles --------------")
-
     {:noreply, assign(socket, :articles, new_articles)}
   end
 end

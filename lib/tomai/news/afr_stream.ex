@@ -5,37 +5,35 @@ defmodule Tomai.News.AfrStream do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  # this will receive the live view pid to connect to the liveview
   def connect(pid) do
-    GenServer.call(__MODULE__, {:connect, pid})
+    GenServer.call(__MODULE__, {:start_scrape, pid})
   end
 
   @impl true
-  def init(_initial_state) do
-    {:ok, :unused_state}
+  def init(_state) do
+    {:ok, %{}}
   end
 
   @impl true
-  def handle_call({:connect, from}, _from, _unused_state) do
-    # maybe here we run spider and return the headlines
-    # Crawly.Engine.start_spider(Afr)
+  def handle_call({:start_scrape, from}, _from, state) do
+    Afr.start_afr_spider()
 
-    {:reply, [], :unused_state}
+    state = Map.put(state, :pid, from)
+
+    {:reply, [], state}
   end
 
-  # @impl true
-  # def handle_info({:scraped_data, data}, _state) do
-  #   send(pid, {:afr_stream, data})
-  #   IO.inspect(data, label: "--------------- data in afr stream handle info --------------")
-  #   {:noreply, data}
-  # end
-
   @impl true
-  def handle_cast({:scraped_data, new_state}, :unused_state) do
-    pid = Process.whereis(TomaiWeb.ScraperLive.Index)
-    # HOW do i get this liveView's pid?!?!!?!?
-    send(pid, {:afr_stream, new_state})
+  def handle_cast({:scraped_data, items}, state) do
+    lv_pid = Map.get(state, :pid)
 
-    {:noreply, new_state}
+    updated_state =
+      Map.put(state, :items, fn current_items ->
+        current_items ++ items
+      end)
+
+    send(lv_pid, {:afr_stream, items})
+
+    {:noreply, updated_state}
   end
 end
