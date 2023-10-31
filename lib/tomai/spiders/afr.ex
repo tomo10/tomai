@@ -20,7 +20,8 @@ defmodule Afr do
       |> Enum.map(fn story ->
         %{
           title: Floki.find(story, "h3") |> Floki.text(),
-          summary: Floki.find(story, "p") |> Floki.text()
+          summary: Floki.find(story, "p") |> Floki.text(),
+          sentiment: nil
         }
       end)
 
