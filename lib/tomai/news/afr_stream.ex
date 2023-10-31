@@ -6,7 +6,7 @@ defmodule Tomai.News.AfrStream do
   end
 
   def connect(pid) do
-    GenServer.call(__MODULE__, {:start_scrape, pid})
+    GenServer.call(__MODULE__, {:add_lv_pid, pid})
   end
 
   @impl true
@@ -15,24 +15,20 @@ defmodule Tomai.News.AfrStream do
   end
 
   @impl true
-  def handle_call({:start_scrape, from}, _from, state) do
-    Afr.start_afr_spider()
-
-    state = Map.put(state, :pid, from)
+  def handle_call({:add_lv_pid, lv_pid}, _from, state) do
+    state = Map.put(state, :lv_pid, lv_pid)
 
     {:reply, [], state}
   end
 
   @impl true
   def handle_cast({:scraped_data, items}, state) do
-    lv_pid = Map.get(state, :pid)
-
     updated_state =
       Map.put(state, :items, fn current_items ->
         current_items ++ items
       end)
 
-    send(lv_pid, {:afr_stream, items})
+    send(Map.get(state, :lv_pid), {:afr_stream, items})
 
     {:noreply, updated_state}
   end

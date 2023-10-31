@@ -15,9 +15,9 @@ defmodule TomaiWeb.ScraperLive.Index do
     <div>
       <div
         phx-click="scrape"
-        class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+        class="bg-gray-500 text-white p-4 my-8 text-xl font-semibold rounded-lg shadow-md"
       >
-        Scrape AFR
+        Australian Financial Review
       </div>
       <ul class="divide-y">
         <li :for={article <- @articles}>
@@ -45,6 +45,8 @@ defmodule TomaiWeb.ScraperLive.Index do
 
   @impl true
   def handle_event("scrape", _params, socket) do
+    Afr.start_afr_spider()
+
     {:noreply, socket}
   end
 
