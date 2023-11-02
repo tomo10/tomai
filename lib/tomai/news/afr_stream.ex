@@ -11,7 +11,7 @@ defmodule Tomai.News.AfrStream do
 
   @impl true
   def init(_state) do
-    {:ok, %{}}
+    {:ok, %{items: []}}
   end
 
   @impl true
@@ -22,14 +22,25 @@ defmodule Tomai.News.AfrStream do
   end
 
   @impl true
+  def handle_call(:get_state, _from, state) do
+    # returns the :reply, result, and new_state
+    {:reply, state, state}
+  end
+
+  @impl true
   def handle_cast({:scraped_data, items}, state) do
-    updated_state =
-      Map.put(state, :items, fn current_items ->
-        current_items ++ items
-      end)
+    updated_state = update_items(state, items)
 
     send(Map.get(state, :lv_pid), {:afr_stream, items})
 
     {:noreply, updated_state}
+  end
+
+  def update_items(state, items) do
+    Map.update(state, :items, [], fn existing_items -> existing_items ++ items end)
+  end
+
+  def get_state() do
+    GenServer.call(__MODULE__, :get_state)
   end
 end

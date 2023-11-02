@@ -1,6 +1,6 @@
 # Australian Financial Review Web Scraper with Sentiment Analysis
 
-Welcome to **Tomai**, an Elixir-based web scraping project that harnesses the power of Crawly and Bumblebee to provide sentiment analysis for Australian Financial Review (AFR) articles. With Tomai, you can effortlessly extract valuable insights from AFR's wealth of financial news and reports.
+Welcome to **Tomai**, an Elixir-based web scraping project that harnesses the power of Crawly, GenServer, and Bumblebee to provide sentiment analysis for Australian Financial Review (AFR) articles. With Tomai, you can effortlessly extract valuable insights from AFR's wealth of financial news and reports.
 
 ## Getting Started
 

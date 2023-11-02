@@ -1,4 +1,5 @@
 defmodule TomaiWeb.FeedLive.Index do
+  alias TomaiWeb.GeneralComponents
   use TomaiWeb, :live_view
 
   @impl true
@@ -13,14 +14,6 @@ defmodule TomaiWeb.FeedLive.Index do
     {:ok, socket}
   end
 
-  def text_section(assigns) do
-    ~H"""
-    <div class="p-2">
-      <h2 class="text-md font-medium"><%= @description %></h2>
-    </div>
-    """
-  end
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -30,7 +23,7 @@ defmodule TomaiWeb.FeedLive.Index do
           <h1 class="text-xl">About</h1>
           <ul>
             <%= for description <- descriptions() do %>
-              <.text_section description={description} />
+              <GeneralComponents.text_section description={description} />
             <% end %>
           </ul>
         </div>

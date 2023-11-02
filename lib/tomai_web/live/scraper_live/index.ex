@@ -1,6 +1,7 @@
 defmodule TomaiWeb.ScraperLive.Index do
-  use TomaiWeb, :live_view
+  alias TomaiWeb.GeneralComponents
   alias Tomai.News.AfrStream
+  use TomaiWeb, :live_view
 
   @impl true
   def mount(_params, _session, socket) do
@@ -12,29 +13,46 @@ defmodule TomaiWeb.ScraperLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
-      <div
-        phx-click="scrape"
-        class="bg-gray-500 text-white p-4 my-8 text-xl font-semibold rounded-lg shadow-md"
-      >
-        Australian Financial Review
-      </div>
-      <ul class="divide-y">
-        <li :for={article <- @articles}>
-          <a href="www.bbc.co.uk" target="_window">
-            <div class="px-4 py-4">
-              <%= if article.sentiment do %>
-                <div class={[class_for_sentiment(article.sentiment), "p-1 rounded-lg"]}>
-                  <p class="text-sm">Sentiment: <%= article.sentiment %></p>
+    <div class="container">
+      <div class="grid grid-cols-2 gap-12">
+        <div class="col-span-1 pb-2">
+          <button
+            phx-click="scrape"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-yellow-300"
+          >
+            Australian Financial Review Scraper
+          </button>
+          <button
+            phx-click="get-state"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-blue-300"
+          >
+            Fetch state
+          </button>
+          <ul>
+            <%= for description <- descriptions() do %>
+              <GeneralComponents.text_section description={description} />
+            <% end %>
+          </ul>
+        </div>
+        <div class="col-span-1 pb-2">
+          <ul class="divide-y">
+            <li :for={article <- @articles}>
+              <a href="www.bbc.co.uk" target="_window">
+                <div class="px-4 py-4">
+                  <%= if article.sentiment do %>
+                    <div class={[class_for_sentiment(article.sentiment), "p-1 rounded-lg"]}>
+                      <p class="text-sm">Sentiment: <%= article.sentiment %></p>
+                    </div>
+                  <% end %>
+                  <h2 class="text-md font-medium"><%= article.title %></h2>
+                  <p class="text-sm"><%= article.summary %></p>
+                  <div class="inline-flex space-x-2"></div>
                 </div>
-              <% end %>
-              <h2 class="text-md font-medium"><%= article.title %></h2>
-              <p class="text-sm"><%= article.summary %></p>
-              <div class="inline-flex space-x-2"></div>
-            </div>
-          </a>
-        </li>
-      </ul>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
     """
   end
@@ -51,10 +69,19 @@ defmodule TomaiWeb.ScraperLive.Index do
   end
 
   @impl true
+  def handle_event("get-state", _unsigned_params, socket) do
+    raw_articles = AfrStream.get_state() |> Map.get(:items)
+
+    socket = run_enrichment_task(socket, raw_articles)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:afr_stream, new_articles}, socket) do
     socket = run_enrichment_task(socket, new_articles)
 
-    {:noreply, assign(socket, :articles, new_articles)}
+    {:noreply, socket}
   end
 
   def handle_info({_task, enriched_articles}, socket) do
@@ -79,5 +106,12 @@ defmodule TomaiWeb.ScraperLive.Index do
   defp run_enrichment_task(socket, articles) do
     enrich_task = do_sentiment_enrich(articles)
     assign(socket, :enrich_task, enrich_task)
+  end
+
+  defp descriptions do
+    [
+      "We are scraping data from the Australian Financial Review using the Crawly library. Once articles are scraper they are sent to the GenServer and from there to the LiveView.",
+      "Once rendered, the articles are enriched with Sentiment Analysis. This project demonstrates the power of Elixir's AI libraries and capablities."
+    ]
   end
 end
