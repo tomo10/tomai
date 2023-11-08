@@ -11,12 +11,14 @@ defmodule Afr do
 
   @impl Crawly.Spider
   def parse_item(response) do
+    # CSS class selector for headlines on afr.com/companies/financial-services
+    article_css_class = "._2slqK"
+
     # Parse response body to document
     {:ok, document} = Floki.parse_document(response.body)
 
-    # CSS class selector for headlines on afr.com/companies/financial-services
     items =
-      Floki.find(document, "._2slqK")
+      Floki.find(document, article_css_class)
       |> Enum.map(fn story ->
         %{
           title: Floki.find(story, "h3") |> Floki.text(),

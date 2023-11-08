@@ -6,6 +6,7 @@ defmodule Tomai.News.Article do
     :published_at,
     :source,
     :title,
+    :summary,
     :url,
     :url_to_image,
     :entities,

@@ -4,14 +4,15 @@ defmodule Tomai.News.Enrichments.Sentiment do
   """
   alias Tomai.News.Article
 
-  def predict(%Article{title: title} = article) do
-    %{predictions: preds} = Nx.Serving.batched_run(__MODULE__, title)
+  def predict(%Article{title: title, summary: summary} = article) do
+    title_and_summary = title ++ summary
+    %{predictions: preds} = Nx.Serving.batched_run(__MODULE__, title_and_summary)
     %{label: max_label} = Enum.max_by(preds, & &1.score)
     %{article | sentiment: max_label}
   end
 
   def predict(articles) when is_list(articles) do
-    preds = Nx.Serving.batched_run(__MODULE__, Enum.map(articles, & &1.title))
+    preds = Nx.Serving.batched_run(__MODULE__, Enum.map(articles, &{&1.title, &1.summary}))
 
     Enum.zip_with(articles, preds, fn article, %{predictions: pred} ->
       %{label: max_label} = Enum.max_by(pred, & &1.score)
