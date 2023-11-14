@@ -12,7 +12,13 @@ defmodule Tomai.News.Enrichments.Sentiment do
   end
 
   def predict(articles) when is_list(articles) do
-    preds = Nx.Serving.batched_run(__MODULE__, Enum.map(articles, &{&1.title, &1.summary}))
+    preds =
+      Nx.Serving.batched_run(
+        __MODULE__,
+        Enum.map(articles, fn article ->
+          article.title <> article.summary
+        end)
+      )
 
     Enum.zip_with(articles, preds, fn article, %{predictions: pred} ->
       %{label: max_label} = Enum.max_by(pred, & &1.score)
