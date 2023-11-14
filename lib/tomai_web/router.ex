@@ -19,6 +19,7 @@ defmodule TomaiWeb.Router do
 
     live "/", ScraperLive.Index, :index
     live "/sentiment", FeedLive.Index, :index
+    live "/milo", MiloLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
