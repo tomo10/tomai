@@ -1,4 +1,7 @@
 defmodule Tomai.News.Stream do
+  @moduledoc """
+  Fake stream of news articles from the newsapi.org
+  """
   use GenServer
 
   def start_link(_) do

@@ -98,6 +98,7 @@ defmodule TomaiWeb.ScraperLive.Index do
 
   defp do_sentiment_enrich(articles) do
     Task.async(fn ->
+      # this split ensures only articles without sentimet anylsis are enriched
       {_ignore, enrich} = Enum.split_with(articles, &(&1.sentiment != nil))
       Tomai.News.Enrichments.Sentiment.predict(enrich)
     end)

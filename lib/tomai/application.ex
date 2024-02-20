@@ -21,7 +21,7 @@ defmodule Tomai.Application do
       Tomai.News.Stream,
       # Start the "News Stream"
       Tomai.News.AfrStream,
-      # Start the "Afr Stream"
+      # Start the "Afr Stream" gen server
       {Nx.Serving,
        serving: Tomai.News.Enrichments.NER.serving(),
        name: Tomai.News.Enrichments.NER,
